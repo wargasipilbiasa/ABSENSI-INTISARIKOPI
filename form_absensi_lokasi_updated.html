@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Absensi Lokasi</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Form Absensi</h2>
+  <p>Mengambil lokasi Anda...</p>
+  <script>
+    navigator.geolocation.getCurrentPosition(function(position) {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+
+      // Lokasi coffee shop (Koordinat yang diberikan)
+      const targetLat = 5.188341431918091; 
+      const targetLng = 96.49878070983324;
+
+      function getDistance(lat1, lon1, lat2, lon2) {
+        function toRad(x) {
+          return x * Math.PI / 180;
+        }
+        const R = 6371; // Radius bumi dalam km
+        const dLat = toRad(lat2 - lat1);
+        const dLon = toRad(lon2 - lon1);
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                  Math.sin(dLon/2) * Math.sin(dLon/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c * 1000; // meter
+      }
+
+      const distance = getDistance(lat, lng, targetLat, targetLng);
+
+      if (distance <= 100) {
+        // Redirect ke Google Form jika dalam radius
+        window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLSewzeheXWab1u7FawP4YR6oMhd9OQSp00JKjrcgN3aBiDZkZA/viewform?usp=header?usp=pp_url&entry.1234567890=" + lat + "," + lng;
+      } else {
+        document.body.innerHTML = "<h3>Anda tidak berada di lokasi yang diizinkan untuk mengisi absensi.</h3>";
+      }
+    }, function(error) {
+      document.body.innerHTML = "<h3>Gagal mengambil lokasi. Mohon aktifkan GPS dan izinkan akses lokasi.</h3>";
+    });
+  </script>
+</body>
+</html>
